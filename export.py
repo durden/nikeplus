@@ -85,10 +85,12 @@ def decode_activity(activity):
     return activity
 
 
-def main():
+def activities():
     base_url = 'https://api.nike.com'
     url = '/me/sport/activities?access_token=%s' % ACCESS_TOKEN
-    headers = {'appid':'fuelband', 'Accept':'application/json'} # weird required headers, blah.
+
+    # weird required headers, blah.
+    headers = {'appid':'fuelband', 'Accept':'application/json'}
     current_month = None
 
     while url:
@@ -99,11 +101,11 @@ def main():
 
         data = resp.get('data')
         if data is None:
-            return
+            raise StopIteration
 
         for item in resp.get('data'):
             activity = decode_activity(item)
-            print activity
+            yield activity
 
         # pagination
         url = None
@@ -112,4 +114,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    for activity in activities():
+        print activity
