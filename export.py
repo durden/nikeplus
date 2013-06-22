@@ -85,7 +85,7 @@ def decode_activity(activity):
     return activity
 
 
-def activities():
+def get_activities():
     base_url = 'https://api.nike.com'
     url = '/me/sport/activities?access_token=%s' % ACCESS_TOKEN
 
@@ -114,5 +114,17 @@ def activities():
 
 
 if __name__ == '__main__':
-    for activity in activities():
-        print activity
+    # FIXME: Add help, real argparse
+
+    import sys
+    quiet = '-q' in sys.argv[1:]
+
+    activities = get_activities()
+
+    # Print header
+    activity = activities.next()
+    print ','.join(activity._fields)
+
+    for activity in activities:
+        if not quiet:
+            print activity
