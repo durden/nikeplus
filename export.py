@@ -27,7 +27,7 @@ name_to_api = {'calories': 'calories',
                'fuel': 'fuel',
                'distance': 'distance',
                'steps': 'steps',
-               'start_time': 'startTime',
+               'start_time': 'startTime', # Time in iso format as string
                'device': 'deviceType',
                'miles': None,
                'duration': 'duration',
@@ -65,12 +65,6 @@ def decode_activity(activity):
                 api_values[pretty_name] = activity.get(api_name, None)
 
     # Custom values/sanitizing
-
-    # 2013-05-26T14:48:42Z
-    api_values['start_time'] = time.strptime(api_values['start_time'],
-                                            '%Y-%m-%dT%H:%M:%SZ')
-    api_values['start_time'] = time.strftime('%a %m/%d/%y',
-                                             api_values['start_time'])
 
     # remove milliseconds
     api_values['duration'] = api_values['duration'].partition('.')[0]
