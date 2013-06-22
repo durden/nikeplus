@@ -18,9 +18,22 @@ import time
 # Insert token here
 ACCESS_TOKEN = ''
 
-NikePlusActivity = namedtuple('NikePlusActivity',
-                              ['start_time', 'miles', 'duration', 'pace'])
+# FIXME: Could use descriptors here:
+#   - Could hold: default value, api name, pretty name, and conversion func
 
+# Key = our internal name
+# Value = nike plus API name (None for custom, not represented in API)
+name_to_api = {'calories': 'calories',
+               'fuel': 'fuel',
+               'distance': 'distance',
+               'steps': 'steps',
+               'start_time': 'startTime',
+               'device': 'deviceType',
+               'miles': None,
+               'duration': 'duration',
+               'pace': None}
+
+NikePlusActivity = namedtuple('NikePlusActivity', name_to_api.keys())
 
 km_to_mi = lambda distance: distance * 0.621371
 
@@ -39,17 +52,35 @@ def calculate_mile_pace(duration, miles):
 
 
 def decode_activity(activity):
-    # 2013-05-26T14:48:42Z
-    start_time = time.strptime(activity.get('startTime'), '%Y-%m-%dT%H:%M:%SZ')
-
     metrics = activity.get('metricSummary')
-    miles = km_to_mi(metrics.get('distance'))
+
+    api_values = {}
+    for pretty_name, api_name in name_to_api.iteritems():
+        if api_name is not None:
+            # Values can be in 1 of 2 dicts, metric sub-dict or 'root' activity
+            # dict
+            try:
+                api_values[pretty_name] = metrics[api_name]
+            except KeyError:
+                api_values[pretty_name] = activity.get(api_name, None)
+
+    # Custom values/sanitizing
+
+    # 2013-05-26T14:48:42Z
+    api_values['start_time'] = time.strptime(api_values['start_time'],
+                                            '%Y-%m-%dT%H:%M:%SZ')
+    api_values['start_time'] = time.strftime('%a %m/%d/%y',
+                                             api_values['start_time'])
 
     # remove milliseconds
-    duration = metrics.get('duration').partition('.')[0]
+    api_values['duration'] = api_values['duration'].partition('.')[0]
 
-    pace = calculate_mile_pace(duration, miles)
-    activity = NikePlusActivity(start_time, miles, duration, pace)
+    api_values['miles'] = km_to_mi(api_values['distance'])
+    api_values['distance'] = '%.2f' % round(api_values['miles'], 2)
+    api_values['pace'] = calculate_mile_pace(api_values['duration'],
+                                             api_values['miles'])
+
+    activity = NikePlusActivity(**api_values)
 
     return activity
 
@@ -72,18 +103,7 @@ def main():
 
         for item in resp.get('data'):
             activity = decode_activity(item)
-
-            distance = '%.2f' % round(activity.miles, 2)
-            date = time.strftime('%a %m/%d/%y', activity.start_time)
-            month = time.strftime('%B', activity.start_time)
-
-            if month != current_month:
-                current_month = month
-                print ''
-                print '--', current_month, '--'
-
-            print '%s : %s miles %s %s' % (date, distance, activity.duration,
-                                           activity.pace)
+            print activity
 
         # pagination
         url = None
