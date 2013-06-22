@@ -113,11 +113,20 @@ def get_activities():
             url = resp.get('paging').get('next')
 
 
+# FIXME: should really be a __str__ or __unicode__
+def activity_to_csv(activity):
+    _dict = activity._asdict()
+    return ','.join(str(value) for value in _dict.values())
+
+
 if __name__ == '__main__':
     # FIXME: Add help, real argparse
+    # FIXME: Use csv module to write b/c it will handle case where data could
+    #        have a comma in it.
 
     import sys
-    quiet = '-q' in sys.argv[1:]
+    args = sys.argv[1:]
+    csv = '-csv' in args
 
     activities = get_activities()
 
@@ -126,5 +135,9 @@ if __name__ == '__main__':
     print ','.join(activity._fields)
 
     for activity in activities:
-        if not quiet:
-            print activity
+        if csv:
+            txt = activity_to_csv(activity)
+        else:
+            txt = str(activity)
+
+        print txt
