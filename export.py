@@ -1,11 +1,5 @@
-""" Nike plus activity log
-https://developer.nike.com
-
-Output:
--- May --
-Sun 05/26/13 : 5000 points 5.59 miles 1:02:20 (11'10/mi)
-Fri 05/24/13 : 2000 points 4.01 miles 0:37:40 (9'24/mi)
-Wed 05/22/13 : 3000 points 6.17 miles 1:01:12 (9'55/mi)
+"""
+Export nikeplus data to csv or print to screen
 """
 
 
@@ -118,10 +112,6 @@ if __name__ == '__main__':
     # FIXME: Use csv module to write b/c it will handle case where data could
     #        have a comma in it.
 
-    import sys
-    args = sys.argv[1:]
-    csv = '-csv' in args
-
     activities = get_activities()
 
     # Print header
@@ -129,9 +119,4 @@ if __name__ == '__main__':
     print ','.join(activity._fields)
 
     for activity in activities:
-        if csv:
-            txt = activity_to_csv(activity)
-        else:
-            txt = str(activity)
-
-        print txt
+        print activity_to_csv(activity)
