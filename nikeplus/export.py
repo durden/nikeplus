@@ -5,6 +5,7 @@ Export nikeplus data to csv or print to screen
 import argparse
 from collections import namedtuple
 import json
+import os.path
 import sys
 import time
 import urllib2
@@ -32,19 +33,23 @@ km_to_mi = lambda distance: distance * 0.621371
 def _parse_args():
     """Parse sys.argv arguments"""
 
+    token_file = os.path.expanduser('~/.nikeplus_access_token')
+
     parser = argparse.ArgumentParser(description='Export NikePlus data to CSV')
 
     parser.add_argument('-t', '--token', required=False, default=None,
-                        help='Access token for API, can also store in file named "access_token" to avoid passing via command line')
+                        help=('Access token for API, can also store in file %s'
+                        ' to avoid passing via command line' % (token_file)))
 
     args = vars(parser.parse_args())
 
     if args['token'] is None:
         try:
-            with open('access_token', 'r') as _file:
+            with open(token_file, 'r') as _file:
                     access_token = _file.read()
         except IOError:
-            print 'Must pass access token via command line or store in file named "access_token"'
+            print 'Must pass access token via command line or store in file %s' % (
+                                                                    token_file)
             sys.exit(-1)
 
         args['token'] = access_token
