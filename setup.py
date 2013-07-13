@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-setup(name='nikeplus',
+setup(name='nikeplusapi',
       version='0.1',
       description='Export nikeplus data to CSV format',
       author='Luke Lee',
