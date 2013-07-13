@@ -3,12 +3,22 @@
 The purpose of this project is to export your
 [nike plus](http://nikeplus.nike.com/plus/) data to CSV format.
 
+## Install
+
+- Install package with the standard `pip` workflow:
+    - git clone repositiory
+    - cd into repository
+    - pip install .
+
+Now you should have a top-level script called `nikeplus`.
+Run `nikeplus -h` to verify install worked properly.
+
 ## Usage
 
-1. Update the ACCESS_TOKEN variable in export.py to your own API key, which you
-   can get by logging into the
+1. The only requirement for this script is the NikePlus API access token.  You
+   can get your token by logging into the
    [Nike developer site](https://developer.nike.com/login/) with your Nike+
    account credentials.
-2. Run `python export.py` to print your Nike+ data in CSV format to the screen.
-    - You can easily pipe this to a file for persistent storage: `python
-      export.py | nike_plus_backup.csv`
+2. You can pass your token via the command-line `-t` option or store it in your
+   home directory in a file called `.nikeplus_access_token` that will be read
+   automatically when the script executes.
