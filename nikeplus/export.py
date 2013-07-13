@@ -4,6 +4,7 @@ Export nikeplus data to csv or print to screen
 
 import argparse
 from collections import namedtuple
+import csv
 import json
 import os.path
 import sys
@@ -128,17 +129,7 @@ def get_activities(access_token):
             url = resp.get('paging').get('next')
 
 
-# FIXME: should really be a __str__ or __unicode__
-def activity_to_csv(activity):
-    _dict = activity._asdict()
-
-    # This is safe b/c _dict is ordered dict so the order is dependable.
-    return ','.join(str(value) for value in _dict.values())
-
 def main():
-    # FIXME: Use csv module to write b/c it will handle case where data could
-    #        have a comma in it.
-
     args = _parse_args()
     activities = get_activities(args['token'])
 
@@ -146,8 +137,12 @@ def main():
     activity = activities.next()
     print ','.join(activity._fields)
 
+    writer = csv.writer(sys.stdout)
     for activity in activities:
-        print activity_to_csv(activity)
+        activity = activity._asdict()
+        values = [str(value) for value in activity.values()]
+
+        writer.writerow(values)
 
 
 if __name__ == '__main__':
