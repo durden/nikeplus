@@ -22,3 +22,6 @@ Run `nikeplus -h` to verify install worked properly.
 2. You can pass your token via the command-line `-t` option or store it in your
    home directory in a file called `.nikeplus_access_token` that will be read
    automatically when the script executes.
+3. This script will output the CSV data directly to `stdout` so you can easily
+   re-direct this to a file with the following:
+    `nikeplus > backup.csv`.
