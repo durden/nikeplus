@@ -6,6 +6,9 @@ The purpose of this project is to export your
 ## Install
 
 - Install package with the standard `pip` workflow:
+    - `pip install nikeplusapi`
+
+- Install package for development with the standard `pip` workflow:
     - git clone repositiory
     - cd into repository
     - pip install .
