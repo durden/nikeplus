@@ -2,7 +2,6 @@
 Export nikeplus data to csv or print to screen
 """
 
-
 from collections import namedtuple
 import json
 import urllib
@@ -104,10 +103,12 @@ def get_activities():
 # FIXME: should really be a __str__ or __unicode__
 def activity_to_csv(activity):
     _dict = activity._asdict()
+
+    # This is safe b/c _dict is ordered dict so the order is dependable.
     return ','.join(str(value) for value in _dict.values())
 
 
-if __name__ == '__main__':
+def main():
     # FIXME: Add help, real argparse
     # FIXME: Use csv module to write b/c it will handle case where data could
     #        have a comma in it.
@@ -120,3 +121,7 @@ if __name__ == '__main__':
 
     for activity in activities:
         print activity_to_csv(activity)
+
+
+if __name__ == '__main__':
+    main()
