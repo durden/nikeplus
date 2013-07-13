@@ -2,14 +2,12 @@
 Export nikeplus data to csv or print to screen
 """
 
+import argparse
 from collections import namedtuple
 import json
-import urllib
-import urllib2
+import sys
 import time
-
-# Insert token here
-ACCESS_TOKEN = ''
+import urllib2
 
 # FIXME: Could use descriptors here:
 #   - Could hold: default value, api name, pretty name, and conversion func
@@ -29,6 +27,30 @@ name_to_api = {'calories': 'calories',
 NikePlusActivity = namedtuple('NikePlusActivity', name_to_api.keys())
 
 km_to_mi = lambda distance: distance * 0.621371
+
+
+def _parse_args():
+    """Parse sys.argv arguments"""
+
+    parser = argparse.ArgumentParser(description='Export NikePlus data to CSV')
+
+    parser.add_argument('-t', '--token', required=False, default=None,
+                        help='Access token for API, can also store in file named "access_token" to avoid passing via command line')
+
+    args = vars(parser.parse_args())
+
+    if args['token'] is None:
+        try:
+            with open('access_token', 'r') as _file:
+                    access_token = _file.read()
+        except IOError:
+            print 'Must pass access token via command line or store in file named "access_token"'
+            sys.exit(-1)
+
+        args['token'] = access_token
+
+    return args
+
 
 
 def calculate_mile_pace(duration, miles):
@@ -72,9 +94,10 @@ def decode_activity(activity):
     return activity
 
 
-def get_activities():
+def get_activities(access_token):
     base_url = 'https://api.nike.com'
-    url = '/me/sport/activities?access_token=%s' % ACCESS_TOKEN
+
+    url = '/me/sport/activities?access_token=%s' % access_token
 
     # weird required headers, blah.
     headers = {'appid':'fuelband', 'Accept':'application/json'}
@@ -107,13 +130,12 @@ def activity_to_csv(activity):
     # This is safe b/c _dict is ordered dict so the order is dependable.
     return ','.join(str(value) for value in _dict.values())
 
-
 def main():
-    # FIXME: Add help, real argparse
     # FIXME: Use csv module to write b/c it will handle case where data could
     #        have a comma in it.
 
-    activities = get_activities()
+    args = _parse_args()
+    activities = get_activities(args['token'])
 
     # Print header
     activity = activities.next()
