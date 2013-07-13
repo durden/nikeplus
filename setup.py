@@ -5,7 +5,7 @@ setup(name='nikeplusapi',
       description='Export nikeplus data to CSV format',
       author='Luke Lee',
       author_email='durdenmisc@gmail.com',
-      url='http://www.lukelee.me',
+      url='https://github.com/durden/nikeplus',
       packages=['nikeplus'],
       entry_points={
         "console_scripts": [
