@@ -18,13 +18,19 @@ import urllib2
 # Value = nike plus API name (None for custom, not represented in API)
 name_to_api = {'calories': 'calories',
                'fuel': 'fuel',
-               'distance': 'distance',
                'steps': 'steps',
-               'start_time': 'startTime', # Time in iso format as string
                'device': 'deviceType',
-               'miles': None,
                'duration': 'duration',
-               'pace': None}
+               'pace': None,
+               'kilometers': None,
+               'miles': None,
+
+               # Time in iso format as string
+               'start_time': 'startTime',
+
+               # Redundant now but easier to include since it maps directly to
+               # the API.
+               'distance': 'distance'}
 
 NikePlusActivity = namedtuple('NikePlusActivity', name_to_api.keys())
 
@@ -90,8 +96,14 @@ def decode_activity(activity):
     # remove milliseconds
     api_values['duration'] = api_values['duration'].partition('.')[0]
 
+    # Distance will be redundant to kilometers, but leaving both b/c it's
+    # easier b/c the name_to_api dict is used to pull data from API, map to
+    # named tuple dynamically, etc.  It's just a pain to remove it from here
+    # and still have a dynamic dict from named tuple, would have to manually
+    # remove it in a few places which feels hack-ish.
     api_values['miles'] = km_to_mi(api_values['distance'])
-    api_values['distance'] = '%.2f' % round(api_values['miles'], 2)
+    api_values['kilometers'] = api_values['distance']
+
     api_values['pace'] = calculate_mile_pace(api_values['duration'],
                                              api_values['miles'])
 
