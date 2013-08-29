@@ -8,10 +8,10 @@ The purpose of this project is to export your
 - Install package with the standard `pip` workflow:
     - `pip install nikeplusapi`
 
-- Install package for development with the standard `pip` workflow:
+- Install package for development:
     - git clone repositiory
     - cd into repository
-    - pip install .
+    - `pip install .` OR `python setup.py develop` OR `python setup.py install`
 
 Now you should have a top-level script called `nikeplus`.
 Run `nikeplus -h` to verify install worked properly.

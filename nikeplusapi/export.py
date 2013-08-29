@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 """
 Export nikeplus data to csv or print to screen
 """
