@@ -186,10 +186,27 @@ def main():
     activity = activities.next()
     print ','.join(activity._fields)
 
+    # FIXME: Bug in nikeplus API, if you send request with start/end you'll
+    # get in an infinite loop telling a new offset for data that doesn't
+    # exist. For example:
+    #   Request data for 2013-08-15 - 2013-09-01
+    #   Only have data for 2013-08-15 and 2013-08-16
+    #   API keeps returning a new offset each time for 5 more days but
+    #   it continues to return data for the same two days and never stops.
+    #   See nikeplus_api_bug.txt for detailed output of this scenario.
+    seen_dates = set()
+
     writer = csv.writer(sys.stdout)
     for activity in activities:
         activity = activity._asdict()
         values = [str(value) for value in activity.values()]
+
+        # Already seen this date, API is returning duplicate data so must mean
+        # we've been through it all.
+        if activity['start_time'] in seen_dates:
+            break
+
+        seen_dates.add(activity['start_time'])
 
         writer.writerow(values)
 
