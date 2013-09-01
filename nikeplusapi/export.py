@@ -7,6 +7,7 @@ Export nikeplus data to csv or print to screen
 import argparse
 from collections import namedtuple
 import csv
+from datetime import datetime
 import json
 import os.path
 import sys
@@ -38,6 +39,25 @@ NikePlusActivity = namedtuple('NikePlusActivity', name_to_api.keys())
 
 km_to_mi = lambda distance: distance * 0.621371
 
+DATE_FMT = '%Y-%m-%d'
+
+
+def _validate_date_str(str_):
+    """Validate str as a date and return string version of date"""
+
+    if not str_:
+        return None
+
+    # Convert to datetime so we can validate it's a real date that exists then
+    # convert it back to the string.
+    try:
+        date = datetime.strptime(str_, DATE_FMT)
+    except ValueError:
+        msg = 'Invalid date format, should be YYYY-MM-DD'
+        raise argparse.ArgumentTypeError(msg)
+
+    return date.strftime(DATE_FMT)
+
 
 def _parse_args():
     """Parse sys.argv arguments"""
@@ -49,6 +69,9 @@ def _parse_args():
     parser.add_argument('-t', '--token', required=False, default=None,
                         help=('Access token for API, can also store in file %s'
                         ' to avoid passing via command line' % (token_file)))
+    parser.add_argument('-s', '--since', type=_validate_date_str,
+                        help=('Only process entries starting with YYYY-MM-DD '
+                              'and newer'))
 
     args = vars(parser.parse_args())
 
@@ -114,10 +137,15 @@ def decode_activity(activity):
     return activity
 
 
-def get_activities(access_token):
+def get_activities(access_token, start_date=None):
     base_url = 'https://api.nike.com'
 
     url = '/me/sport/activities?access_token=%s' % access_token
+
+    if start_date is not None:
+        # FIXME: use re module to assert that it's yyyy-mm-dd
+        end_date = datetime.today().strftime(DATE_FMT)
+        url = '%s&startDate=%s&endDate=%s' % (url, start_date, end_date)
 
     # weird required headers, blah.
     headers = {'appid':'fuelband', 'Accept':'application/json'}
@@ -152,7 +180,7 @@ def get_activities(access_token):
 
 def main():
     args = _parse_args()
-    activities = get_activities(args['token'])
+    activities = get_activities(args['token'], args['since'])
 
     # Print header
     activity = activities.next()
