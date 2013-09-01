@@ -125,7 +125,14 @@ def get_activities(access_token):
 
     while url:
         req = urllib2.Request('%s%s' % (base_url, url), None, headers)
-        r = urllib2.urlopen(req)
+
+        try:
+            r = urllib2.urlopen(req)
+        except urllib2.HTTPError as err:
+            print 'Failed sending request to "%s":\n%s\n%s\n\n' % (url, err,
+                                                                   err.read())
+            raise err
+
         resp = json.loads(r.read())
         r.close()
 
