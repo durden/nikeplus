@@ -13,8 +13,8 @@ The purpose of this project is to export your
     - cd into repository
     - `pip install .` OR `python setup.py develop` OR `python setup.py install`
 
-Now you should have a top-level script called `nikeplus`.
-Run `nikeplus -h` to verify install worked properly.
+Now you should have a top-level script called `nikeplusapi`.
+Run `nikeplusapi -h` to verify install worked properly.
 
 ## Usage
 
