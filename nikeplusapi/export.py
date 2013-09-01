@@ -78,7 +78,7 @@ def _parse_args():
     if args['token'] is None:
         try:
             with open(token_file, 'r') as _file:
-                    access_token = _file.read()
+                access_token = _file.read().strip()
         except IOError:
             print 'Must pass access token via command line or store in file %s' % (
                                                                     token_file)
