@@ -93,9 +93,13 @@ def _parse_args():
 def calculate_mile_pace(duration, miles):
     pace = ''
     sp = duration.split(':')
-    if (len(sp) == 3):
+    if len(sp) == 3:
         duration_seconds = int(sp[0]) * 60 * 60 + int(sp[1]) * 60 + int(sp[2])
-        seconds_per_mile = duration_seconds / miles
+
+        seconds_per_mile = 0.0
+        if miles:
+            seconds_per_mile = duration_seconds / miles
+
         hours, remainder = divmod(seconds_per_mile, 3600)
         minutes, seconds = divmod(remainder, 60)
         pace = '(%.0f\'%02.0f/mi)' % (minutes, seconds)
