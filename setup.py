@@ -17,12 +17,12 @@ def read(*filenames, **kwargs):
 
     return sep.join(buf)
 
-long_description = read('README.md')
 
 setup(name='nikeplusapi',
       version=nikeplusapi.__version__,
       description='Export nikeplus data to CSV format',
-      long_description=long_description,
+      long_description=read('README.md'),
+      package_data={'': ['README.md']},
       license='MIT',
       author='Luke Lee',
       author_email='durdenmisc@gmail.com',
