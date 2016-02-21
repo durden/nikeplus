@@ -37,7 +37,7 @@ name_to_api = {'calories': 'calories',
 
 NikePlusActivity = namedtuple('NikePlusActivity', name_to_api.keys())
 
-km_to_mi = lambda distance: distance * 0.621371
+km_to_mi = lambda distance: float(distance) * 0.621371
 
 DATE_FMT = '%Y-%m-%d'
 
@@ -144,7 +144,7 @@ def decode_activity(activity):
 def get_activities(access_token, start_date=None):
     base_url = 'https://api.nike.com'
 
-    url = '/me/sport/activities?access_token=%s' % access_token
+    url = '/v1/me/sport/activities?access_token=%s' % access_token
 
     if start_date is not None:
         # FIXME: use re module to assert that it's yyyy-mm-dd
